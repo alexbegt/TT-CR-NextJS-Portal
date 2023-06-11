@@ -9,6 +9,8 @@ import Box from '@mui/material/Box';
 
 import { useRouter } from "next/router";
 
+import PageHeader from '@/components/PageHeader/PageHeader';
+
 import sharedStyles from '@/styles/shared.module.scss';
 
 export default function Home() {
@@ -17,6 +19,11 @@ export default function Home() {
     return (
         <div className={sharedStyles.container}>
             <Box className={sharedStyles.formPage}>
+                <PageHeader
+                    headerTitle='Code Redemption Portal'
+                    subTitle='Main Menu'
+                />
+
                 <Grid container spacing={4} justifyContent="center" columns={12}>
                     <Grid item xs={12} sm={12} md={12}>
                         <Card elevation={10} className={sharedStyles.card}>
