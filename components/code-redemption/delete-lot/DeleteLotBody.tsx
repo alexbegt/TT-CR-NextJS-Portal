@@ -23,8 +23,8 @@ import axios from "axios";
 import { useSnackbar } from 'notistack';
 
 const initialValues: DeleteLotForm = {
-    codeLot: '',
-    confirmCodeLot: '',
+    lotName: '',
+    confirmLotName: '',
 
     successMessage: '',
     successful: false,
@@ -51,15 +51,14 @@ export default function DeleteLotBody({ lots }: { lots: string[] }) {
         watch
     } = form;
 
-
     const onError: SubmitErrorHandler<DeleteLotForm> = async (formData, e) => {
         console.error(formData);
     }
 
     const onSubmit: SubmitHandler<DeleteLotForm> = async (formData, e) => {
-        if (formData.codeLot != formData.confirmCodeLot) {
-            setError('codeLot', { type: 'custom', message: 'Code Lots must match!' });
-            setError('confirmCodeLot', { type: 'custom', message: 'Code Lots must match!' });
+        if (formData.lotName != formData.confirmLotName) {
+            setError('lotName', { type: 'custom', message: 'Code Lots must match!' });
+            setError('confirmLotName', { type: 'custom', message: 'Code Lots must match!' });
             return;
         }
 
@@ -83,7 +82,7 @@ export default function DeleteLotBody({ lots }: { lots: string[] }) {
                         case 9997:
                         case 9998:
                             enqueueSnackbarHelper('Error deleting Code Lot', enqueueSnackbar, closeSnackbar);
-                            setError('codeLot', { type: 'custom', message: data.message });
+                            setError('lotName', { type: 'custom', message: data.message });
                             break;
                         case 9999:
                             router.push(process.env.CODE_REDEMPTION_UNAVAILABLE + '?error=' + data.message);
@@ -117,7 +116,7 @@ export default function DeleteLotBody({ lots }: { lots: string[] }) {
                         case 9997:
                         case 9998:
                             enqueueSnackbarHelper('Error deleting Code Lot', enqueueSnackbar, closeSnackbar);
-                            setError('codeLot', { type: 'custom', message: data.message });
+                            setError('lotName', { type: 'custom', message: data.message });
                             break;
                         case 9999:
                             router.push(process.env.CODE_REDEMPTION_UNAVAILABLE + '?error=' + data.message);
@@ -166,7 +165,7 @@ export default function DeleteLotBody({ lots }: { lots: string[] }) {
                                         <Grid item xs={12} sm={12} md={12}>
                                             <Controller
                                                 control={control}
-                                                name='codeLot'
+                                                name='lotName'
                                                 render={({
                                                     field,
                                                     fieldState: { error },
@@ -208,7 +207,7 @@ export default function DeleteLotBody({ lots }: { lots: string[] }) {
                                         <Grid item xs={12} sm={12} md={12}>
                                             <Controller
                                                 control={control}
-                                                name='confirmCodeLot'
+                                                name='confirmLotName'
                                                 render={({
                                                     field,
                                                     fieldState: { error },

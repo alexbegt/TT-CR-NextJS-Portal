@@ -22,7 +22,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { viewLotSchema } from '@/components/helpers/schemas/FormSchemas';
 import { ViewLotForm } from '@/components/helpers/interfaces/FormInterfaces';
 import { enqueueSnackbarHelper } from '@/components/helpers/UtilHelper';
-import { GenericResponseError, ViewLotSuccessResponse } from '@/components/helpers/ResponseHelpers';
+import { GenericResponseError, GenericResultsSuccessResponse } from '@/components/helpers/ResponseHelpers';
 import CodeLotDetails from '@/components/code-redemption/code-lot-results/CodeLotResults';
 
 import axios from "axios";
@@ -37,7 +37,7 @@ const filterOptions: string[] = [
 ]
 
 const initialValues: ViewLotForm = {
-    codeLot: '',
+    lotName: '',
     filterOption: 'All Codes',
     justCode: true,
 
@@ -73,7 +73,7 @@ export default function ViewLotBody({ lots }: { lots: string[] }) {
 
     const onSubmit: SubmitHandler<ViewLotForm> = async (formData, e) => {
         try {
-            const { data } = await axios.post<ViewLotSuccessResponse | GenericResponseError>(
+            const { data } = await axios.post<GenericResultsSuccessResponse | GenericResponseError>(
                 process.env.CODE_REDEMPTION_VIEW_LOT_ENDPOINT,
                 {
                     formData: formData,
@@ -92,7 +92,7 @@ export default function ViewLotBody({ lots }: { lots: string[] }) {
                         case 9997:
                         case 9998:
                             enqueueSnackbarHelper('Error viewing code lot details', enqueueSnackbar, closeSnackbar);
-                            setError('codeLot', { type: 'custom', message: data.message });
+                            setError('lotName', { type: 'custom', message: data.message });
                             return;
                         case 9999:
                             router.push(process.env.CODE_REDEMPTION_UNAVAILABLE + '?error=' + data.message);
@@ -113,7 +113,7 @@ export default function ViewLotBody({ lots }: { lots: string[] }) {
             } else {
                 setValue('successMessage', data.message, setValueConfig);
                 setValue('successful', true, setValueConfig);
-                setValue('lookupResults', data.lookupResults, setValueConfig);
+                setValue('lookupResults', data.results, setValueConfig);
             }
 
             return;
@@ -126,7 +126,7 @@ export default function ViewLotBody({ lots }: { lots: string[] }) {
                         case 9997:
                         case 9998:
                             enqueueSnackbarHelper('Error viewing code lot details', enqueueSnackbar, closeSnackbar);
-                            setError('codeLot', { type: 'custom', message: data.message });
+                            setError('lotName', { type: 'custom', message: data.message });
                             return;
                         case 9999:
                             router.push(process.env.CODE_REDEMPTION_UNAVAILABLE + '?error=' + data.message);
@@ -172,7 +172,7 @@ export default function ViewLotBody({ lots }: { lots: string[] }) {
                                         <Grid item xs={12} sm={12} md={12}>
                                             <Controller
                                                 control={control}
-                                                name='codeLot'
+                                                name='lotName'
                                                 render={({
                                                     field,
                                                     fieldState: { error },

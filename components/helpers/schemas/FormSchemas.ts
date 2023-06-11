@@ -1,7 +1,7 @@
 import { string, boolean, array, object, ObjectSchema, number } from 'yup';
 
-import TTCodeDict from '../../code-redemption/code-dictionary/TTCodeDict';
-import { ViewLotForm, DeleteLotForm, LookupForm, RedeemACodeForm, LookupModes, LookupResults } from '../interfaces/FormInterfaces';
+import TTCodeDict from '@/components/code-redemption/code-dictionary/TTCodeDict';
+import { ViewLotForm, DeleteLotForm, LookupForm, RedeemACodeForm, LookupResults } from '@/components/helpers/interfaces/FormInterfaces';
 
 export const ttCodeDict: TTCodeDict = new TTCodeDict();
 
@@ -11,11 +11,6 @@ function emptyStringToUndefined(value: any, originalValue: any) {
     }
     return value;
 }
-
-export const lookupModesSchema: ObjectSchema<LookupModes> = object({
-    mode: string().required(),
-    displayText: string().required()
-});
 
 export const lookupResultsSchema: ObjectSchema<LookupResults> = object({
     code: string(),
@@ -28,7 +23,7 @@ export const lookupResultsSchema: ObjectSchema<LookupResults> = object({
 });
 
 export const viewLotSchema: ObjectSchema<ViewLotForm> = object({
-    codeLot: string().required('Code Lot is required'),
+    lotName: string().required('Code Lot is required'),
     filterOption: string(),
     justCode: boolean(),
 
@@ -39,16 +34,14 @@ export const viewLotSchema: ObjectSchema<ViewLotForm> = object({
 });
 
 export const deleteLotSchema: ObjectSchema<DeleteLotForm> = object({
-    codeLot: string().required('Code Lot is required'),
-    confirmCodeLot: string().required('Code Lot is required'),
+    lotName: string().required('Code Lot is required'),
+    confirmLotName: string().required('Code Lot is required'),
 
     successMessage: string(),
     successful: boolean(),
 });
 
 export const lookupSchema: ObjectSchema<LookupForm> = object({
-    modes: array().of(lookupModesSchema).required(),
-
     mode: string().oneOf(['Code', 'AvId'], 'Invalid mode. Impossible!').required('Mode is required'),
 
     code: string().test('checkValid',

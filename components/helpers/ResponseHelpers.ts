@@ -36,16 +36,9 @@ export declare type GenericSuccessResponse = {
     message?: string,
 }
 
-export declare type ViewLotSuccessResponse = {
+export declare type GenericResultsSuccessResponse = {
     success: boolean,
     errorCode?: number,
     message?: string,
-    lookupResults?: LookupResults[],
-}
-
-export declare type LookupSuccessResponse = {
-    success: boolean,
-    errorCode?: number,
-    message?: string,
-    lookupResults?: LookupResults[],
+    results?: LookupResults[],
 }

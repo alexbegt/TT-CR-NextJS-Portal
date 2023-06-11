@@ -23,19 +23,17 @@ export interface SuccessfulForm {
 }
 
 export interface ViewLotForm extends IncludesLookupResultsForm, SuccessfulForm {
-    codeLot: string,
+    lotName: string,
     filterOption?: string,
     justCode?: boolean,
-
 }
 
 export interface DeleteLotForm extends SuccessfulForm {
-    codeLot: string,
-    confirmCodeLot: string,
+    lotName: string,
+    confirmLotName: string,
 }
 
 export interface LookupForm extends IncludesLookupResultsForm, SuccessfulForm {
-    modes: LookupModes[],
     mode: string,
 
     code?: string,

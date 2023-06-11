@@ -15,26 +15,26 @@ import { useForm, FormProvider, Controller, SubmitHandler, SubmitErrorHandler, S
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { lookupSchema } from '@/components/helpers/schemas/FormSchemas';
-import { LookupForm } from '@/components/helpers/interfaces/FormInterfaces';
+import { LookupForm, LookupModes } from '@/components/helpers/interfaces/FormInterfaces';
 import { enqueueSnackbarHelper } from '@/components/helpers/UtilHelper';
-import { GenericResponseError, LookupSuccessResponse } from '@/components/helpers/ResponseHelpers';
+import { GenericResponseError, GenericResultsSuccessResponse } from '@/components/helpers/ResponseHelpers';
 import CodeLotDetails from '@/components/code-redemption/code-lot-results/CodeLotResults';
 
 import axios from "axios";
 import { useSnackbar } from 'notistack';
 
-const initialValues: LookupForm = {
-    modes: [
-        {
-            mode: 'Code',
-            displayText: 'Code'
-        },
-        {
-            mode: 'AvId',
-            displayText: 'Redeemer AvId'
-        }
-    ],
+const modes: LookupModes[] = [
+    {
+        mode: 'Code',
+        displayText: 'Code'
+    },
+    {
+        mode: 'AvId',
+        displayText: 'Redeemer AvId'
+    }
+]
 
+const initialValues: LookupForm = {
     mode: '',
 
     code: '',
@@ -66,19 +66,13 @@ export default function LookupBody() {
         watch
     } = form;
 
-    const modes = useFieldArray({
-        control,
-        name: "modes",
-        keyName: 'uniqueId',
-    });
-
     const onError: SubmitErrorHandler<LookupForm> = async (formData, e) => {
         console.error(formData);
     }
 
     const onSubmit: SubmitHandler<LookupForm> = async (formData, e) => {
         try {
-            const { data } = await axios.post<LookupSuccessResponse | GenericResponseError>(
+            const { data } = await axios.post<GenericResultsSuccessResponse | GenericResponseError>(
                 process.env.CODE_REDEMPTION_LOOKUP_CODES_ENDPOINT,
                 {
                     formData: formData,
@@ -92,22 +86,33 @@ export default function LookupBody() {
             );
 
             if (!data.success) {
-                if ((data.errorCode == 9997 || data.errorCode == 9998) && data.message) {
-                    enqueueSnackbarHelper('Error redeeming code', enqueueSnackbar, closeSnackbar);
-                    setError('code', { type: 'custom', message: data.message });
-                } else if (data.errorCode == 9999) {
-                    router.push(process.env.CODE_REDEMPTION_UNAVAILABLE)
+                if (data.message) {
+                    switch (data.errorCode) {
+                        case 9997:
+                        case 9998:
+                            enqueueSnackbarHelper('Error Looking Up', enqueueSnackbar, closeSnackbar);
+                            setError('code', { type: 'custom', message: data.message });
+                            return;
+                        case 9999:
+                            router.push(process.env.CODE_REDEMPTION_UNAVAILABLE + '?error=' + data.message);
+                            return;
+                        default:
+                            break;
+                    }
                 } else {
-                    enqueueSnackbarHelper("Unable to submit form due to a internal server error.", enqueueSnackbar, closeSnackbar);
+                    if (data.errorCode == 9999) {
+                        router.push(process.env.CODE_REDEMPTION_UNAVAILABLE);
+                        return;
+                    }
                 }
+
+                enqueueSnackbarHelper("Unable to submit form due to a internal server error.", enqueueSnackbar, closeSnackbar);
 
                 return
             } else {
-                if (data.lookupResults) {
-                    setValue('successMessage', data.message, setValueConfig);
-                    setValue('successful', true, setValueConfig);
-                    setValue('lookupResults', data.lookupResults, setValueConfig);
-                }
+                setValue('successMessage', data.message, setValueConfig);
+                setValue('successful', true, setValueConfig);
+                setValue('lookupResults', data.results, setValueConfig);
             }
 
             return;
@@ -115,17 +120,28 @@ export default function LookupBody() {
             if (error.response) {
                 const { data } = error.response;
 
-                if ((data.errorCode == 9997 || data.errorCode == 9998) && data.message) {
-                    enqueueSnackbarHelper('Error looking up code', enqueueSnackbar, closeSnackbar);
-                    setError('code', { type: 'custom', message: data.message });
-                } else if (data.errorCode == 9999) {
-                    router.push(process.env.CODE_REDEMPTION_UNAVAILABLE)
+                if (data.message) {
+                    switch (data.errorCode) {
+                        case 9997:
+                        case 9998:
+                            enqueueSnackbarHelper('Error looking up ', enqueueSnackbar, closeSnackbar);
+                            setError('code', { type: 'custom', message: data.message });
+                            return;
+                        case 9999:
+                            router.push(process.env.CODE_REDEMPTION_UNAVAILABLE + '?error=' + data.message);
+                            return;
+                        default:
+                            break;
+                    }
                 } else {
-                    enqueueSnackbarHelper("Unable to submit form due to a internal server error.", enqueueSnackbar, closeSnackbar);
+                    if (data.errorCode == 9999) {
+                        router.push(process.env.CODE_REDEMPTION_UNAVAILABLE);
+                        return;
+                    }
                 }
-            } else {
-                enqueueSnackbarHelper("Unable to submit form due to a internal server error.", enqueueSnackbar, closeSnackbar);
             }
+
+            enqueueSnackbarHelper("Unable to submit form due to a internal server error.", enqueueSnackbar, closeSnackbar);
 
             return
         }
@@ -184,7 +200,7 @@ export default function LookupBody() {
                                                             <em>Select Size</em>
                                                         </MenuItem>
 
-                                                        {modes.fields.map((option) => (
+                                                        {modes.map((option) => (
                                                             <MenuItem
                                                                 value={option.mode}
                                                                 key={option.mode}>

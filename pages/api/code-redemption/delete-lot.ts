@@ -23,7 +23,7 @@ export default async function handler(
             {
                 method: "cr_delete_lot",
                 params: {
-                    lotName: fields.codeLot
+                    lotName: fields.lotName
                 }
             },
             {
