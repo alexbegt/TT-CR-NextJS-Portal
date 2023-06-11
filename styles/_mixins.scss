@@ -1,0 +1,17 @@
+@mixin background {
+    background-color: rgb(219, 238, 179);
+}
+
+@mixin devices ($breakpoint) {
+    @if $breakpoint ==tablet {
+        @media only screen and (max-width: 680px) {
+            @content;
+        }
+    }
+
+    @if $breakpoint ==mobile {
+        @media only screen and (max-width: 481px) {
+            @content;
+        }
+    }
+}

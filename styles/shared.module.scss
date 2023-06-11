@@ -1,0 +1,25 @@
+@import "mixins";
+
+.container {
+	padding-bottom: 5%;
+}
+
+.formPage {
+	padding: 0 2rem;
+
+	margin: auto;
+	margin-top: 4px;
+
+	flex-grow: 1px;
+
+	width: 100%;
+	max-width: 940px;
+
+	@include devices(tablet) {
+		width: 100%;
+	}
+
+	@include devices(mobile) {
+		width: 100%;
+	}
+}

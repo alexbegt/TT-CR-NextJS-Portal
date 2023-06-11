@@ -1,0 +1,50 @@
+.headerContainer {
+    padding: 0 2rem;
+    background-color: transparent;
+    background: rgb(25, 118, 210);
+    background: linear-gradient(90deg, rgba(25, 118, 210, 1) 35%, rgba(23, 185, 218, 1) 100%);
+    width: 60%;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    padding-bottom: 5px;
+    padding-top: 1px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.title {
+    margin-top: 0%;
+    margin-bottom: 0%;
+    color: white;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-size: 32px;
+}
+
+.mainDescription {
+    margin-top: 20px;
+    display: inline-block;
+    color: white;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.smallText {
+    color: white;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.h5Text {
+    color: white;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.header {
+    margin-top: 5%;
+
+    text-align: left;
+    justify-content: left;
+}
+
+@media (max-width: 400px) {
+    .headerContainer {
+        width: 90%;
+    }
+}

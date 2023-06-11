@@ -1,0 +1,27 @@
+declare namespace NodeJS {
+    export interface ProcessEnv {
+        UBERDOG_RFC_ENDPOINT: string
+
+        CODE_REDEMPTION_MAIN_MENU: string
+
+        CODE_REDEMPTION_CREATE_LOT: string
+        CODE_REDEMPTION_CREATE_LOT_ENDPOINT: string
+
+        CODE_REDEMPTION_VIEW_LOT: string
+        CODE_REDEMPTION_VIEW_LOT_ENDPOINT: string
+
+        CODE_REDEMPTION_MODIFY_LOT: string
+        CODE_REDEMPTION_MODIFY_LOT_ENDPOINT: string
+
+        CODE_REDEMPTION_DELETE_LOT: string
+        CODE_REDEMPTION_DELETE_LOT_ENDPOINT: string
+
+        CODE_REDEMPTION_LOOKUP_CODES: string
+        CODE_REDEMPTION_LOOKUP_CODES_ENDPOINT: string
+
+        CODE_REDEMPTION_REDEEM_A_CODE: string
+        CODE_REDEMPTION_REDEEM_A_CODE_ENDPOINT: string
+
+        CODE_REDEMPTION_UNAVAILABLE: string
+    }
+}
