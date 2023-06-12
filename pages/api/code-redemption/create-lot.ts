@@ -44,7 +44,7 @@ export default async function handler(
                     rewardType: fields.rewardType,
                     rewardItemId: fields.rewardItemId,
                     manualCodeStr: fields.manualCode,
-                    hasExpiration: fields.hasExpiration,
+                    hasExpiration: fields.hasExpiration == 'Yes' ? true : false,
                     expirationMonth: expirationMonth,
                     expirationDay: expirationDay,
                     expirationYear: expirationYear
