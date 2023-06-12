@@ -41,6 +41,12 @@ export default function CodeLotDetails() {
                                 </TableCell>
                             }
 
+                            {lookupResults.fields.find(e => e.expiration !== undefined) &&
+                                <TableCell size='small' align='center'>
+                                    Expiration Date and Time
+                                </TableCell>
+                            }
+
                             {lookupResults.fields.find(e => e.manual !== undefined) &&
                                 <TableCell size='small' align='center'>
                                     Manual Code?
@@ -85,6 +91,12 @@ export default function CodeLotDetails() {
                                 {lookupResults.fields.find(e => e.creation !== undefined) &&
                                     <TableCell size='small' align='center'>
                                         {value.creation}
+                                    </TableCell>
+                                }
+
+                                {lookupResults.fields.find(e => e.expiration !== undefined) &&
+                                    <TableCell size='small' align='center'>
+                                        {value.expiration}
                                     </TableCell>
                                 }
 

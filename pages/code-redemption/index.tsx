@@ -34,7 +34,7 @@ export default function CodeRedemptionIndex({ hasLots }: { hasLots: boolean }) {
                                     <Grid item xs={12} sm={12} md={12}>
                                         <CardHeader
                                             titleTypographyProps={{ fontWeight: 'bold', fontSize: 18, textAlign: 'left', float: 'left' }}
-                                            title="Create a new code lot (COMING SOON)"
+                                            title="Create a new code lot"
                                             style={{ width: '80%', float: 'left' }}
                                         />
 
@@ -42,7 +42,6 @@ export default function CodeRedemptionIndex({ hasLots }: { hasLots: boolean }) {
                                             variant="contained"
                                             onClick={() => { router.push(process.env.CODE_REDEMPTION_CREATE_LOT) }}
                                             style={{ float: 'left', marginTop: '10px' }}
-                                            disabled
                                         >
                                             Navigate
                                         </Button>

@@ -1,25 +1,64 @@
 export interface LookupResults {
-    code?: string,
-    creation?: string,
-    manual?: string,
-    rewardCategory?: string,
-    rewardItem?: string,
-    redeemedAvId?: string,
-    redemptions?: string,
+    code?: string
+    creation?: string
+    expiration?: string
+    manual?: string
+    rewardCategory?: string
+    rewardItem?: string
+    redeemedAvId?: string
+    redemptions?: string
 }
 
 export interface LookupModes {
-    mode: string;
-    displayText: string;
+    mode: string
+    displayText: string
+}
+
+export interface CreateModes {
+    mode: string
+    displayText: string
+    disabled: boolean
 }
 
 export interface IncludesLookupResultsForm {
-    lookupResults?: LookupResults[],
+    lookupResults?: LookupResults[]
 }
 
 export interface SuccessfulForm {
-    successMessage?: string,
-    successful?: boolean,
+    successMessage?: string
+    successful?: boolean
+}
+
+export interface Reward {
+    itemId: number
+    description: string
+}
+
+export interface AwardChoices {
+    manualReward: boolean
+    rewardName: string
+    rewardType: number
+    rewards: Reward[]
+}
+
+export interface CreateLotForm extends IncludesLookupResultsForm, SuccessfulForm {
+    lotName: string,
+
+    codeType: string,
+
+    // Used if AUTO
+    numberOfCodes?: number | string,
+    confirmNumberOfCodes?: number | string,
+
+    // Used if Manual
+    manualCode?: string,
+    confirmManualCode?: string,
+
+    rewardType: number | string,
+    rewardItemId: number | string,
+
+    hasExpiration: string,
+    expiration?: string,
 }
 
 export interface ViewLotForm extends IncludesLookupResultsForm, SuccessfulForm {
