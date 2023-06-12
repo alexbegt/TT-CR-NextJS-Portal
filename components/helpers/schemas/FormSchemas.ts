@@ -1,7 +1,7 @@
 import { string, boolean, array, object, ObjectSchema, number } from 'yup';
 
 import TTCodeDict from '@/components/code-redemption/code-dictionary/TTCodeDict';
-import { ViewLotForm, DeleteLotForm, LookupForm, RedeemACodeForm, LookupResults, CreateLotForm } from '@/components/helpers/interfaces/FormInterfaces';
+import { ViewLotForm, DeleteLotForm, LookupForm, RedeemACodeForm, CodeLotDetails, CreateLotForm, ModifyLotForm } from '@/components/helpers/interfaces/FormInterfaces';
 
 export const ttCodeDict: TTCodeDict = new TTCodeDict();
 
@@ -12,7 +12,7 @@ function emptyStringToUndefined(value: any, originalValue: any) {
     return value;
 }
 
-export const lookupResultsSchema: ObjectSchema<LookupResults> = object({
+export const codeLotDetailsSchema: ObjectSchema<CodeLotDetails> = object({
     code: string(),
     creation: string(),
     expiration: string(),
@@ -43,10 +43,12 @@ export const createLotSchema = (maxCodeLength: number): ObjectSchema<CreateLotFo
     hasExpiration: string().required('A choice is required'),
     expiration: string(),
 
-    successMessage: string(),
-    successful: boolean(),
+    codeLotDetails: array().of(codeLotDetailsSchema).required(),
 
-    lookupResults: array().of(lookupResultsSchema).required(),
+    successful: boolean(),
+    successMessage: string(),
+    extraSuccessMessage: string(),
+
 });
 
 export const viewLotSchema: ObjectSchema<ViewLotForm> = object({
@@ -54,18 +56,32 @@ export const viewLotSchema: ObjectSchema<ViewLotForm> = object({
     filterOption: string(),
     justCode: boolean(),
 
-    successMessage: string(),
     successful: boolean(),
+    successMessage: string(),
+    extraSuccessMessage: string(),
 
-    lookupResults: array().of(lookupResultsSchema).required(),
+    codeLotDetails: array().of(codeLotDetailsSchema).required(),
+});
+
+export const modifyLotSchema: ObjectSchema<ModifyLotForm> = object({
+    lotName: string().required('Code Lot is required'),
+    modification: string().required('Modifcation is required'),
+    expiration: string().when('mode', ([modification], schema) => modification === 'Change Expiration Date' ? schema.required('Expiration Date is required') : schema),
+
+    successful: boolean(),
+    successMessage: string(),
+    extraSuccessMessage: string(),
+
+    codeLotDetails: array().of(codeLotDetailsSchema).required(),
 });
 
 export const deleteLotSchema: ObjectSchema<DeleteLotForm> = object({
     lotName: string().required('Code Lot is required'),
     confirmLotName: string().required('Code Lot is required'),
 
-    successMessage: string(),
     successful: boolean(),
+    successMessage: string(),
+    extraSuccessMessage: string(),
 });
 
 export const lookupSchema: ObjectSchema<LookupForm> = object({
@@ -79,10 +95,11 @@ export const lookupSchema: ObjectSchema<LookupForm> = object({
     avId: number().transform(emptyStringToUndefined).typeError('AvId can only contain numbers')
         .when('mode', ([mode], schema) => mode === 'AvId' ? schema.required('AvId is required') : schema),
 
-    successMessage: string(),
     successful: boolean(),
+    successMessage: string(),
+    extraSuccessMessage: string(),
 
-    lookupResults: array().of(lookupResultsSchema).required(),
+    codeLotDetails: array().of(codeLotDetailsSchema).required(),
 })
 
 export const redeemACodeSchema: ObjectSchema<RedeemACodeForm> = object({
@@ -92,6 +109,7 @@ export const redeemACodeSchema: ObjectSchema<RedeemACodeForm> = object({
     ),
     avId: number().transform(emptyStringToUndefined).typeError('AvId can only contain numbers').required('Avatar ID is required'),
 
-    successMessage: string(),
     successful: boolean(),
+    successMessage: string(),
+    extraSuccessMessage: string(),
 });

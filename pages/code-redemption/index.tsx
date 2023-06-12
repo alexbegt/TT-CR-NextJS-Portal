@@ -66,7 +66,7 @@ export default function CodeRedemptionIndex({ hasLots }: { hasLots: boolean }) {
                                     {hasLots && <Grid item xs={12} sm={12} md={12}>
                                         <CardHeader
                                             titleTypographyProps={{ fontWeight: 'bold', fontSize: 18, textAlign: 'left', float: 'left' }}
-                                            title="Modify an existing code lot (COMING SOON)"
+                                            title="Modify an existing code lot"
                                             style={{ width: '80%', float: 'left' }}
                                         />
 
@@ -74,7 +74,6 @@ export default function CodeRedemptionIndex({ hasLots }: { hasLots: boolean }) {
                                             variant="contained"
                                             onClick={() => { router.push(process.env.CODE_REDEMPTION_MODIFY_LOT) }}
                                             style={{ float: 'left', marginTop: '10px' }}
-                                            disabled
                                         >
                                             Navigate
                                         </Button>

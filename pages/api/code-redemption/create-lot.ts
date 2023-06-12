@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { GenericResponse, GenericResponseError, GenericResultsSuccessResponse, ResponseError } from '@/components/helpers/ResponseHelpers';
+import { CreateLotForm } from '@/components/helpers/interfaces/FormInterfaces';
 
 import axios from "axios";
-import { CreateLotForm } from '@/components/helpers/interfaces/FormInterfaces';
 import dayjs from 'dayjs';
 
 export default async function handler(
@@ -71,7 +71,8 @@ export default async function handler(
         return res.status(200).json({
             success: true,
             message: data?.result?.message,
-            results: JSON.parse(data?.result?.lookupResults)
+            extraMessage: data?.result?.extraMessage,
+            codeLotDetails: JSON.parse(data?.result?.codeLotDetails)
         });
     } else {
         return res.status(500).json({

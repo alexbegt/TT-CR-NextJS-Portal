@@ -26,8 +26,9 @@ const initialValues: RedeemACodeForm = {
     code: '',
     avId: '',
 
-    successMessage: '',
     successful: false,
+    successMessage: '',
+    extraSuccessMessage: '',
 }
 
 export default function RedeemACodeBody() {
@@ -50,9 +51,6 @@ export default function RedeemACodeBody() {
         formState: { isSubmitting },
         watch
     } = form;
-
-    const successMessage = watch('successMessage');
-    const successful = watch('successful');
 
     const onError: SubmitErrorHandler<RedeemACodeForm> = async (formData, e) => {
         console.error(formData);
@@ -98,8 +96,11 @@ export default function RedeemACodeBody() {
 
                 return
             } else {
-                setValue('successMessage', data.message, setValueConfig);
                 setValue('successful', true, setValueConfig);
+
+                setValue('successMessage', data.message, setValueConfig);
+
+                setValue('extraSuccessMessage', data.extraMessage, setValueConfig);
             }
 
             return;
@@ -133,6 +134,10 @@ export default function RedeemACodeBody() {
             return
         }
     }
+
+    const successful = watch('successful');
+    const successMessage = watch('successMessage');
+    const extraSuccessMessage = watch('extraSuccessMessage');
 
     return (
         <div>
@@ -249,6 +254,12 @@ export default function RedeemACodeBody() {
                                         <Grid item xs={12} sm={12} md={12}>
                                             <Typography sx={{ fontWeight: 'bold', fontSize: 20, textAlign: 'center' }}>
                                                 {successMessage}
+                                            </Typography>
+                                        </Grid>
+
+                                        <Grid item xs={12} sm={12} md={12} hidden={!extraSuccessMessage}>
+                                            <Typography sx={{ fontWeight: 'bold', fontSize: 20, textAlign: 'center' }}>
+                                                {extraSuccessMessage}
                                             </Typography>
                                         </Grid>
 

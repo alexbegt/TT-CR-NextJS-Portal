@@ -1,4 +1,4 @@
-export interface LookupResults {
+export interface CodeLotDetails {
     code?: string
     creation?: string
     expiration?: string
@@ -20,13 +20,14 @@ export interface CreateModes {
     disabled: boolean
 }
 
-export interface IncludesLookupResultsForm {
-    lookupResults?: LookupResults[]
+export interface IncludesCodeLotDetailsResponse {
+    codeLotDetails?: CodeLotDetails[]
 }
 
-export interface SuccessfulForm {
-    successMessage?: string
+export interface IncludesSuccessfulResponse {
     successful?: boolean
+    successMessage?: string
+    extraSuccessMessage?: string
 }
 
 export interface Reward {
@@ -41,7 +42,7 @@ export interface AwardChoices {
     rewards: Reward[]
 }
 
-export interface CreateLotForm extends IncludesLookupResultsForm, SuccessfulForm {
+export interface CreateLotForm extends IncludesCodeLotDetailsResponse, IncludesSuccessfulResponse {
     lotName: string,
 
     codeType: string,
@@ -61,25 +62,31 @@ export interface CreateLotForm extends IncludesLookupResultsForm, SuccessfulForm
     expiration?: string,
 }
 
-export interface ViewLotForm extends IncludesLookupResultsForm, SuccessfulForm {
+export interface ViewLotForm extends IncludesCodeLotDetailsResponse, IncludesSuccessfulResponse {
     lotName: string,
     filterOption?: string,
     justCode?: boolean,
 }
 
-export interface DeleteLotForm extends SuccessfulForm {
+export interface ModifyLotForm extends IncludesCodeLotDetailsResponse, IncludesSuccessfulResponse {
+    lotName: string,
+    modification: string,
+    expiration?: string,
+}
+
+export interface DeleteLotForm extends IncludesSuccessfulResponse {
     lotName: string,
     confirmLotName: string,
 }
 
-export interface LookupForm extends IncludesLookupResultsForm, SuccessfulForm {
+export interface LookupForm extends IncludesCodeLotDetailsResponse, IncludesSuccessfulResponse {
     mode: string,
 
     code?: string,
     avId?: number | string,
 }
 
-export interface RedeemACodeForm extends SuccessfulForm {
+export interface RedeemACodeForm extends IncludesSuccessfulResponse {
     code: string,
     avId: number | string,
 }

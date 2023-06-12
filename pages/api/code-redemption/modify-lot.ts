@@ -1,16 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { GenericResponse, GenericResponseError, GenericSuccessResponse, ResponseError } from '@/components/helpers/ResponseHelpers';
-import { RedeemACodeForm } from '@/components/helpers/interfaces/FormInterfaces';
+import { GenericResponse, GenericResponseError, GenericResultsSuccessResponse, ResponseError } from '@/components/helpers/ResponseHelpers';
+import { ModifyLotForm } from '@/components/helpers/interfaces/FormInterfaces';
 
 import axios from "axios";
+import dayjs from 'dayjs';
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<GenericSuccessResponse | GenericResponseError>
+    res: NextApiResponse<GenericResultsSuccessResponse | GenericResponseError>
 ) {
     if (req.method === 'POST') {
-        const fields: RedeemACodeForm = req.body.formData;
+        const fields: ModifyLotForm = req.body.formData;
 
         if (!fields) {
             return res.status(500).json({
@@ -19,13 +20,27 @@ export default async function handler(
             });
         }
 
+        let expirationMonth = undefined;
+        let expirationDay = undefined;
+        let expirationYear = undefined;
+
+        if (fields.expiration && fields.modification) {
+            let date = dayjs(fields.expiration);
+
+            expirationMonth = date.month() + 1;
+            expirationDay = date.date();
+            expirationYear = date.year();
+        }
+
         const { data } = await axios.post<GenericResponse | ResponseError>(
             process.env.UBERDOG_RFC_ENDPOINT,
             {
-                method: "cr_redeem_code",
+                method: "cr_modify_lot",
                 params: {
-                    code: fields.code,
-                    avId: fields.avId
+                    lotName: fields.lotName,
+                    expirationMonth: expirationMonth,
+                    expirationDay: expirationDay,
+                    expirationYear: expirationYear
                 }
             },
             {
@@ -48,8 +63,9 @@ export default async function handler(
 
         return res.status(200).json({
             success: true,
-            message: data?.result?.results,
+            message: data?.result?.message,
             extraMessage: data?.result?.extraMessage,
+            codeLotDetails: JSON.parse(data?.result?.codeLotDetails)
         });
     } else {
         return res.status(500).json({

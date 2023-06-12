@@ -9,13 +9,15 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import { useRouter } from "next/router";
 
-import { useForm, FormProvider, Controller, SubmitHandler, SubmitErrorHandler, SetValueConfig, useFieldArray } from "react-hook-form";
+import { useForm, FormProvider, Controller, SubmitHandler, SubmitErrorHandler, SetValueConfig } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { lookupSchema } from '@/components/helpers/schemas/FormSchemas';
-import { LookupForm, LookupModes } from '@/components/helpers/interfaces/FormInterfaces';
+import { modifyLotSchema } from '@/components/helpers/schemas/FormSchemas';
+import { ModifyLotForm } from '@/components/helpers/interfaces/FormInterfaces';
 import { enqueueSnackbarHelper } from '@/components/helpers/UtilHelper';
 import { GenericResponseError, GenericResultsSuccessResponse } from '@/components/helpers/ResponseHelpers';
 import CodeLotDetails from '@/components/code-redemption/code-lot-results/CodeLotResults';
@@ -23,22 +25,15 @@ import CodeLotDetails from '@/components/code-redemption/code-lot-results/CodeLo
 import axios from "axios";
 import { useSnackbar } from 'notistack';
 
-const modes: LookupModes[] = [
-    {
-        mode: 'Code',
-        displayText: 'Code'
-    },
-    {
-        mode: 'AvId',
-        displayText: 'Redeemer AvId'
-    }
+
+const modifyOptions: string[] = [
+    'Change Expiration Date'
 ]
 
-const initialValues: LookupForm = {
-    mode: '',
-
-    code: '',
-    avId: '',
+const initialValues: ModifyLotForm = {
+    lotName: '',
+    modification: '',
+    expiration: '',
 
     codeLotDetails: [],
 
@@ -47,16 +42,16 @@ const initialValues: LookupForm = {
     extraSuccessMessage: '',
 }
 
-export default function LookupBody() {
+export default function ModifyLotBody({ lots }: { lots: string[] }) {
     const router = useRouter();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const setValueConfig: SetValueConfig = { shouldValidate: true, shouldDirty: true, shouldTouch: true };
 
-    const form = useForm<LookupForm>({
+    const form = useForm<ModifyLotForm>({
         mode: "onBlur",
         criteriaMode: "all",
         defaultValues: initialValues,
-        resolver: yupResolver(lookupSchema)
+        resolver: yupResolver(modifyLotSchema)
     });
 
     const {
@@ -68,14 +63,14 @@ export default function LookupBody() {
         watch
     } = form;
 
-    const onError: SubmitErrorHandler<LookupForm> = async (formData, e) => {
+    const onError: SubmitErrorHandler<ModifyLotForm> = async (formData, e) => {
         console.error(formData);
     }
 
-    const onSubmit: SubmitHandler<LookupForm> = async (formData, e) => {
+    const onSubmit: SubmitHandler<ModifyLotForm> = async (formData, e) => {
         try {
             const { data } = await axios.post<GenericResultsSuccessResponse | GenericResponseError>(
-                process.env.CODE_REDEMPTION_LOOKUP_CODES_ENDPOINT,
+                process.env.CODE_REDEMPTION_MODIFY_LOT_ENDPOINT,
                 {
                     formData: formData,
                 },
@@ -92,8 +87,8 @@ export default function LookupBody() {
                     switch (data.errorCode) {
                         case 9997:
                         case 9998:
-                            enqueueSnackbarHelper('Error Looking Up', enqueueSnackbar, closeSnackbar);
-                            setError('code', { type: 'custom', message: data.message });
+                            enqueueSnackbarHelper('Error modifying code lot', enqueueSnackbar, closeSnackbar);
+                            setError('lotName', { type: 'custom', message: data.message });
                             return;
                         case 9999:
                             router.push(process.env.CODE_REDEMPTION_UNAVAILABLE + '?error=' + data.message);
@@ -130,8 +125,8 @@ export default function LookupBody() {
                     switch (data.errorCode) {
                         case 9997:
                         case 9998:
-                            enqueueSnackbarHelper('Error looking up ', enqueueSnackbar, closeSnackbar);
-                            setError('code', { type: 'custom', message: data.message });
+                            enqueueSnackbarHelper('Error modifying code lot', enqueueSnackbar, closeSnackbar);
+                            setError('lotName', { type: 'custom', message: data.message });
                             return;
                         case 9999:
                             router.push(process.env.CODE_REDEMPTION_UNAVAILABLE + '?error=' + data.message);
@@ -153,7 +148,8 @@ export default function LookupBody() {
         }
     }
 
-    const mode = watch('mode');
+    const modification = watch('modification');
+
     const successful = watch('successful');
     const successMessage = watch('successMessage');
     const extraSuccessMessage = watch('extraSuccessMessage');
@@ -167,7 +163,7 @@ export default function LookupBody() {
                             <Card elevation={10}>
                                 <CardHeader
                                     titleTypographyProps={{ fontWeight: 'bold', fontSize: 18, textAlign: 'left' }}
-                                    title="Look up existing codes"
+                                    title="Modify Lot"
                                     subheader="Please fill out all required fields."
                                     subheaderTypographyProps={{ textAlign: 'left' }}
                                 />
@@ -179,7 +175,7 @@ export default function LookupBody() {
                                         <Grid item xs={12} sm={12} md={12}>
                                             <Controller
                                                 control={control}
-                                                name='mode'
+                                                name='lotName'
                                                 render={({
                                                     field,
                                                     fieldState: { error },
@@ -192,26 +188,25 @@ export default function LookupBody() {
                                                         onBlur={field.onBlur}
 
                                                         fullWidth
-                                                        label="Lookup by"
+                                                        label="Code Lot"
                                                         variant="outlined"
+                                                        required
 
                                                         select
                                                         SelectProps={{ MenuProps: { autoFocus: false, disableAutoFocusItem: true, disableEnforceFocus: true, disableAutoFocus: true, } }}
 
                                                         error={!!error}
                                                         helperText={error?.message}
-                                                        required={true}
-                                                        disabled={successful}
                                                     >
                                                         <MenuItem disabled value="" hidden>
-                                                            <em>Select Size</em>
+                                                            <em>Code Lot</em>
                                                         </MenuItem>
 
-                                                        {modes.map((option) => (
+                                                        {lots.map((option) => (
                                                             <MenuItem
-                                                                value={option.mode}
-                                                                key={option.mode}>
-                                                                {option.displayText}
+                                                                value={option}
+                                                                key={option}>
+                                                                {option}
                                                             </MenuItem>
                                                         ))}
                                                     </TextField>
@@ -219,10 +214,10 @@ export default function LookupBody() {
                                             />
                                         </Grid>
 
-                                        <Grid item xs={12} sm={12} md={12} hidden={!(mode == 'Code')}>
+                                        <Grid item xs={12} sm={12} md={6}>
                                             <Controller
                                                 control={control}
-                                                name='code'
+                                                name='modification'
                                                 render={({
                                                     field,
                                                     fieldState: { error },
@@ -235,41 +230,54 @@ export default function LookupBody() {
                                                         onBlur={field.onBlur}
 
                                                         fullWidth
-                                                        label="Code"
+                                                        label="Modification"
                                                         variant="outlined"
+                                                        required
+
+                                                        select
+                                                        SelectProps={{ MenuProps: { autoFocus: false, disableAutoFocusItem: true, disableEnforceFocus: true, disableAutoFocus: true, } }}
 
                                                         error={!!error}
                                                         helperText={error?.message}
-                                                        required={(mode == 'Code')}
-                                                        disabled={successful}
-                                                    />
+                                                    >
+                                                        <MenuItem disabled value="" hidden>
+                                                            <em>Modification</em>
+                                                        </MenuItem>
+
+                                                        {modifyOptions.map((option) => (
+                                                            <MenuItem
+                                                                value={option}
+                                                                key={option}>
+                                                                {option}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </TextField>
                                                 )}
                                             />
                                         </Grid>
 
-                                        <Grid item xs={12} sm={12} md={12} hidden={!(mode == 'AvId')}>
+                                        <Grid item xs={12} sm={12} md={6} hidden={!(modification == 'Change Expiration Date')}>
                                             <Controller
                                                 control={control}
-                                                name='avId'
+                                                name='expiration'
                                                 render={({
                                                     field,
                                                     fieldState: { error },
                                                 }) => (
-                                                    <TextField
-                                                        name={field.name}
+                                                    <DatePicker
                                                         value={field.value}
                                                         onChange={field.onChange}
+                                                        ref={field.ref}
+                                                        slotProps={{
+                                                            textField: {
+                                                                helperText: error?.message,
+                                                                required: (modification == 'Change Expiration Date'),
+                                                                fullWidth: true,
+                                                                error: !!error
+                                                            }
+                                                        }}
                                                         inputRef={field.ref}
-                                                        onBlur={field.onBlur}
-
-                                                        fullWidth
-                                                        label="Redeemer Avatar ID"
-                                                        variant="outlined"
-
-                                                        error={!!error}
-                                                        helperText={error?.message}
-                                                        required={(mode == 'AvId')}
-                                                        disabled={successful}
+                                                        label="Expiration Date"
                                                     />
                                                 )}
                                             />
@@ -285,7 +293,7 @@ export default function LookupBody() {
                                                 type="submit"
                                                 disabled={isSubmitting || successful}
                                             >
-                                                Look Up Code
+                                                Modify Lot
                                             </Button>
                                         </CardActions>
                                     </Grid>

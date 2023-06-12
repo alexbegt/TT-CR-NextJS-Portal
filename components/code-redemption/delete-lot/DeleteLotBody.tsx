@@ -26,8 +26,9 @@ const initialValues: DeleteLotForm = {
     lotName: '',
     confirmLotName: '',
 
-    successMessage: '',
     successful: false,
+    successMessage: '',
+    extraSuccessMessage: '',
 }
 
 export default function DeleteLotBody({ lots }: { lots: string[] }) {
@@ -102,8 +103,11 @@ export default function DeleteLotBody({ lots }: { lots: string[] }) {
 
                 return
             } else {
-                setValue('successMessage', data.message, setValueConfig);
                 setValue('successful', true, setValueConfig);
+
+                setValue('successMessage', data.message, setValueConfig);
+
+                setValue('extraSuccessMessage', data.extraMessage, setValueConfig);
             }
 
             return;
@@ -141,8 +145,9 @@ export default function DeleteLotBody({ lots }: { lots: string[] }) {
         }
     }
 
-    const successMessage = watch('successMessage');
     const successful = watch('successful');
+    const successMessage = watch('successMessage');
+    const extraSuccessMessage = watch('extraSuccessMessage');
 
     return (
         <div>
@@ -281,6 +286,12 @@ export default function DeleteLotBody({ lots }: { lots: string[] }) {
                                         <Grid item xs={12} sm={12} md={12}>
                                             <Typography sx={{ fontWeight: 'bold', fontSize: 20, textAlign: 'center' }}>
                                                 {successMessage}
+                                            </Typography>
+                                        </Grid>
+
+                                        <Grid item xs={12} sm={12} md={12} hidden={!extraSuccessMessage}>
+                                            <Typography sx={{ fontWeight: 'bold', fontSize: 20, textAlign: 'center' }}>
+                                                {extraSuccessMessage}
                                             </Typography>
                                         </Grid>
                                     </Grid>

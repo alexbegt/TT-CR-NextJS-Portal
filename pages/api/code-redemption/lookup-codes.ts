@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { GenericResponse, GenericResponseError, GenericResultsSuccessResponse, ResponseError } from '@/components/helpers/ResponseHelpers';
+import { LookupForm } from '@/components/helpers/interfaces/FormInterfaces';
 
 import axios from "axios";
 
@@ -9,7 +10,7 @@ export default async function handler(
     res: NextApiResponse<GenericResultsSuccessResponse | GenericResponseError>
 ) {
     if (req.method === 'POST') {
-        const fields = req.body.formData;
+        const fields: LookupForm = req.body.formData;
 
         if (!fields) {
             return res.status(500).json({
@@ -48,7 +49,8 @@ export default async function handler(
         return res.status(200).json({
             success: true,
             message: data?.result?.message,
-            results: JSON.parse(data?.result?.lookupResults)
+            extraMessage: data?.result?.extraMessage,
+            codeLotDetails: JSON.parse(data?.result?.codeLotDetails)
         });
     } else {
         return res.status(500).json({

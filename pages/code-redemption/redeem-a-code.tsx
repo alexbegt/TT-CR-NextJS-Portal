@@ -5,8 +5,7 @@ import RedeemACodeBody from '@/components/code-redemption/redeem-a-code/RedeemAC
 
 import sharedStyles from '@/styles/shared.module.scss';
 
-export default function RedeemCode() {
-
+export default function RedeemACode() {
     return (
         <div className={sharedStyles.container}>
             <Box className={sharedStyles.formPage}>
